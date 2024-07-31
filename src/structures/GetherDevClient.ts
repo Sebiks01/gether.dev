@@ -154,34 +154,27 @@ export class GetherDevClient extends Client {
     info("Registering commands...");
     timerStart("Registered commands in");
 
-    const testCommands: ApplicationCommandDataResolvable[] = new Array();
-    const globalCommands: ApplicationCommandDataResolvable[] = new Array();
-
-    for (const command of this._commands.values()) {
-      if (!command.test) {
-        globalCommands.push(command.data);
-      }
-
-      testCommands.push(command.data);
-    }
+    const testCommands: ApplicationCommandDataResolvable[] = this._commands.map((command) => command.data);
+    const globalCommands: ApplicationCommandDataResolvable[] = this._commands
+      .map((command) => (!command.test ? command.data : null))
+      .filter((command) => command !== null);
 
     const clientGuilds = await this.guilds.fetch();
 
     let testGuildCounter = 0;
 
-    for (const clientGuild of clientGuilds.values()) {
-      const guild = await clientGuild.fetch();
-
-      if (testGuildId.includes(guild.id)) {
-        await guild.commands.set(testCommands);
-        debug(`Registered test command(s) in guild "${guild.id}".`);
+    testGuildId.forEach(async (id) => {
+      if (!clientGuilds.has(id)) warn(`Unable to find guild with id "${id}".`);
+      else {
+        (await this.guilds.fetch(id)).commands.set(testCommands);
+        debug(`Registered test command(s) in guild "${id}".`);
         testGuildCounter++;
-        continue;
       }
+    });
 
-      await guild.commands.set(globalCommands);
-      debug(`Registered global command(s) in guild "${guild.id}".`);
-    }
+    await this.application?.commands.set(globalCommands);
+
+    debug(`Registered global command(s).`);
 
     timerEnd("Registered commands in");
 
