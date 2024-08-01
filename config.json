@@ -1,4 +1,5 @@
 {
   "testGuildId": ["949266894588874782"],
-  "debug": false
+  "afkChannelId": "1268573308396245012",
+  "debug": true
 }

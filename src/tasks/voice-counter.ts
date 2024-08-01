@@ -2,6 +2,7 @@ import { ChannelType } from "discord.js";
 
 import voiceCounterSchema from "../models/voice-counter";
 import { Task } from "../structures/Task";
+import { afkChannelId } from "../../config.json";
 
 export default new Task({
   time: 30,
@@ -17,7 +18,7 @@ export default new Task({
       );
 
       voiceChannels.forEach(async (voiceChannel) => {
-        if (voiceChannel) {
+        if (voiceChannel && voiceChannel.id != afkChannelId) {
           voiceChannel.members.forEach(async (member) => {
             const { guild, user } = member;
 
