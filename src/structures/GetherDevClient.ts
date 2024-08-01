@@ -156,8 +156,9 @@ export class GetherDevClient extends Client {
 
     const testCommands: ApplicationCommandDataResolvable[] = this._commands.map((command) => command.data);
     const globalCommands: ApplicationCommandDataResolvable[] = this._commands
-      .map((command) => (!command.test ? command.data : null))
-      .filter((command) => command !== null);
+      .map((command) => command)
+      .filter((command) => !command.test)
+      .map((command) => command.data);
 
     const clientGuilds = await this.guilds.fetch();
 
