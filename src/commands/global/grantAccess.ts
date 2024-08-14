@@ -1,4 +1,4 @@
-import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
+import { EmbedBuilder, SlashCommandBuilder, time, TimestampStyles } from "discord.js";
 
 import { Command } from "../../structures/Command";
 
@@ -73,9 +73,10 @@ export default new Command({
           .setDescription(
             `> Ranga została nadana do **darmowej strefy z zasobami**.\n\n> Użytkownik: ${
               grantedMember.user
-            }\n> Administrator: ${member.user}\n> Uprawnienie: ${memberRole}\n\n> Nadane: <t:${Math.floor(
-              interaction.createdTimestamp / 1000
-            )}:R>`
+            }\n> Administrator: ${member.user}\n> Uprawnienie: ${memberRole}\n\n> Nadane: ${time(
+              new Date(),
+              TimestampStyles.RelativeTime
+            )}`
           )
           .setColor(392960)
           .setFooter({

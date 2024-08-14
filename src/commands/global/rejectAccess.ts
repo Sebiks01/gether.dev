@@ -1,4 +1,4 @@
-import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
+import { EmbedBuilder, SlashCommandBuilder, time, TimestampStyles } from "discord.js";
 
 import { Command } from "../../structures/Command";
 
@@ -62,9 +62,10 @@ export default new Command({
           .setDescription(
             `> Ranga nie została nadana do **strefy darmowej**.\n\n> Użytkownik: ${
               rejectedMember.user
-            }\n> Administrator: ${member.user}\n\n> Powód odrzucenia: ${reason}\n\n> Odrzucone: <t:${Math.floor(
-              interaction.createdTimestamp / 1000
-            )}:R>`
+            }\n> Administrator: ${member.user}\n\n> Powód odrzucenia: ${reason}\n\n> Odrzucone: ${time(
+              new Date(),
+              TimestampStyles.RelativeTime
+            )}`
           )
           .setColor(16711680)
           .setFooter({
