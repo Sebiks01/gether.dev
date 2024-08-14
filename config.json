@@ -1,5 +1,7 @@
 {
   "testGuildId": ["949266894588874782"],
-  "afkChannelId": "1268573308396245012",
+  "afkChannelId": "1273343154862559252",
+  "freeZoneAdminRoleId": "1273343803024998465",
+  "freeZoneMemberRoleId": "1096382809947512902",  
   "debug": false
 }

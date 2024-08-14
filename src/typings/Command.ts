@@ -5,6 +5,7 @@ import {
   SlashCommandBuilder,
   CacheType,
   GuildMember,
+  SlashCommandOptionsOnlyBuilder,
 } from "discord.js";
 
 import { GetherDevClient } from "../structures/GetherDevClient";
@@ -63,7 +64,8 @@ export type CommandType = {
         | "addStringOption"
         | "addIntegerOption"
         | "addNumberOption"
-      >;
+      >
+    | SlashCommandOptionsOnlyBuilder;
   execute: ExecuteFunction;
   autocomplete?: AutocompleteFunction;
 };
