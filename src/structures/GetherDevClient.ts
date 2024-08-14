@@ -1,14 +1,17 @@
 import { ApplicationCommandDataResolvable, Client, ClientEvents, ClientOptions, Collection } from "discord.js";
+import { join, resolve } from "path";
 
 import { clientLogo, error, timerEnd, timerStart, debug, info, table, warn, success } from "../util/logger";
 import { importFile, loadFiles } from "../util/files-loader";
 import { EventsTable, EventStatus, EventType } from "../typings/Event";
 import { CommandScope, CommandsTable, CommandStatus, CommandType } from "../typings/Command";
+import { ConfigType } from "../typings/Config";
 import { TasksTable, TaskStatus, TaskType } from "../typings/Task";
 import { mongoConnect } from "../util/storage-connector";
-import { testGuildId } from "../../config.json";
 
 export class GetherDevClient extends Client {
+  private static _instance: GetherDevClient;
+  private _config?: ConfigType;
   private _commands: Collection<string, CommandType> = new Collection();
   private _events: EventType<keyof ClientEvents>[] = new Array();
   private _tasks: Array<TaskType> = new Array();
@@ -16,17 +19,21 @@ export class GetherDevClient extends Client {
 
   constructor(options: ClientOptions) {
     super(options);
+
+    GetherDevClient._instance = this;
   }
 
   public async start() {
     clientLogo();
+
+    await this.loadConfig();
 
     if (!process.env.TOKEN) {
       error("No token provided.");
       process.exit(1);
     }
 
-    this.login(process.env.TOKEN as string).catch((err) => {
+    await this.login(process.env.TOKEN as string).catch((err) => {
       debug(`Token: ${process.env.TOKEN}`);
       error("Invalid token provided.");
       console.log(err);
@@ -41,6 +48,31 @@ export class GetherDevClient extends Client {
     await this.loadTasks();
 
     await this.registerEvents();
+  }
+
+  private async loadConfig(): Promise<void> {
+    info("Loading config...");
+
+    const file = resolve(join(__dirname, "../..", "config.json").replace(/\\/g, "/"));
+
+    if (require.cache[file]) delete require.cache[file];
+
+    const config = await import("../../config.json").catch((err) => {
+      error("An error occurred while loading config file.");
+      console.log(err);
+      process.exit(1);
+    });
+
+    if (!config) {
+      error("Unable to load config file.");
+      process.exit(1);
+    }
+
+    this._config = config;
+
+    console.log(config);
+
+    success("Config loaded.");
   }
 
   private async loadEvents(): Promise<void> {
@@ -164,7 +196,7 @@ export class GetherDevClient extends Client {
 
     let testGuildCounter = 0;
 
-    testGuildId.forEach(async (id) => {
+    (this._config as ConfigType).testGuildId.forEach(async (id) => {
       if (!clientGuilds.has(id)) warn(`Unable to find guild with id "${id}".`);
       else {
         (await this.guilds.fetch(id)).commands.set(testCommands);
@@ -263,6 +295,8 @@ export class GetherDevClient extends Client {
     info("Reloading...");
 
     try {
+      await this.loadConfig();
+
       await this.loadEvents();
       await this.loadCommands();
 
@@ -282,6 +316,14 @@ export class GetherDevClient extends Client {
     success("Reloaded successfully.");
 
     return true;
+  }
+
+  public static get instance() {
+    return this._instance;
+  }
+
+  public get config() {
+    return this._config as ConfigType;
   }
 
   public get commands() {

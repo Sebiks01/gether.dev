@@ -1,10 +1,10 @@
 import { blue, green, yellow, red, magenta } from "chalk";
 import { vice } from "gradient-string";
 
-import { debug as debugEnabled } from "../../config.json";
 import { CommandsTable } from "../typings/Command";
 import { EventsTable } from "../typings/Event";
 import { TasksTable } from "../typings/Task";
+import { GetherDevClient } from "../structures/GetherDevClient";
 
 // Starter log
 export const clientLogo = () => {
@@ -37,6 +37,8 @@ export const warn = (msg: string) => log(yellow(`[WARN] ${msg}`));
 export const error = (msg: string) => log(red(`[ERROR] ${msg}`));
 
 export const debug = (msg: string) => {
+  const debugEnabled = GetherDevClient.instance.config.debug;
+
   if (debugEnabled) log(magenta(`[DEBUG] ${msg}`));
 };
 
