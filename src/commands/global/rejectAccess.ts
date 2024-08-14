@@ -17,9 +17,6 @@ export default new Command({
     if (!interaction.guild) return;
     await interaction.deferReply({ ephemeral: true });
 
-    if (!interaction.guild) return;
-    await interaction.deferReply({ ephemeral: true });
-
     const { member } = interaction;
 
     let adminRole;

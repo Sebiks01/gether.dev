@@ -70,8 +70,6 @@ export class GetherDevClient extends Client {
 
     this._config = config;
 
-    console.log(config);
-
     success("Config loaded.");
   }
 
